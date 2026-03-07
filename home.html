@@ -161,6 +161,83 @@
           </div>
 
         </div>
+        <script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDj3BCOiJKM3Or_ndlo3GQ2kvYzYZNo2UI",
+authDomain: "food-for-you-1b3cf.firebaseapp.com",
+projectId: "food-for-you-1b3cf",
+storageBucket: "food-for-you-1b3cf.appspot.com",
+messagingSenderId: "1049634769049",
+appId: "1:1049634769049:web:63256e43efc5d83fa29008"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let cart = [];
+let total = 0;
+
+window.addToCart = function(name,price){
+
+cart.push({name,price});
+total += price;
+
+document.getElementById("cartCount").innerText = cart.length;
+
+const li = document.createElement("li");
+li.innerText = name + " - ₹" + price;
+document.getElementById("cartItems").appendChild(li);
+
+document.getElementById("cartTotal").innerText = total;
+
+}
+
+
+window.checkout = async function(){
+
+const username = localStorage.getItem("username");
+
+if(cart.length === 0){
+alert("Cart is empty");
+return;
+}
+
+try{
+
+for(let item of cart){
+
+await addDoc(collection(db,"orders"),{
+username: username,
+foodItem: item.name,
+price: item.price,
+time: new Date()
+});
+
+}
+
+alert("Order placed successfully 🎉");
+
+cart = [];
+total = 0;
+
+document.getElementById("cartItems").innerHTML="";
+document.getElementById("cartTotal").innerText="0";
+document.getElementById("cartCount").innerText="0";
+
+}catch(error){
+
+console.error(error);
+alert("Error saving order");
+
+}
+
+}
+
+</script>
       </section>
 
     </div>

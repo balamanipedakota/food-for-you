@@ -1,103 +1,179 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Signup</title>
-  <link rel="stylesheet" href="./css/style.css">
 
-  <style>
-    /* ===== SIGNUP PAGE DESIGN ===== */
+<title>Signup</title>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #36d1dc, #5b86e5);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+<style>
 
-    .form-container {
-      background: white;
-      padding: 35px;
-      width: 350px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      text-align: center;
-    }
+body{
+margin:0;
+font-family:Arial;
+background: linear-gradient(135deg,#36d1dc,#5b86e5);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
 
-    .form-container h2 {
-      margin-bottom: 20px;
-      color: #2c3e50;
-    }
+.container{
+background:white;
+padding:35px;
+width:350px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+text-align:center;
+}
 
-    .form-container input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;   
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
+h2{
+margin-bottom:20px;
+}
 
-    .form-container input:focus {
-      outline: none;
-      border-color: #5b86e5;
-      box-shadow: 0 0 5px rgba(91,134,229,0.5);
-    }
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:14px;
+}
 
-    .form-container button {
-      width: 100%;
-      padding: 12px;
-      background: #5b86e5;
-      border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+input:focus{
+outline:none;
+border-color:#5b86e5;
+}
 
-    .form-container button:hover {
-      background: #3f6bdc;
-    }
+button{
+width:100%;
+padding:12px;
+background:#5b86e5;
+border:none;
+color:white;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+}
 
-    .form-container p {
-      margin-top: 15px;
-      font-size: 14px;
-    }
+button:hover{
+background:#3f6bdc;
+}
 
-    .form-container a {
-      color: #5b86e5;
-      text-decoration: none;
-      font-weight: bold;
-    }
+a{
+text-decoration:none;
+color:#5b86e5;
+}
 
-    .form-container a:hover {
-      text-decoration: underline;
-    }
-  </style>
+p{
+font-size:14px;
+}
+
+</style>
+
 </head>
 
 <body>
 
-  <div class="form-container">
-    <h2>Create Account</h2>
+<div class="container">
 
-    <form onsubmit="return signupUser()">
-      <input type="text" id="signupUsername" placeholder="Username" required>
-      <input type="email" id="signupEmail" placeholder="Email" required>
-      <input type="password" id="signupPassword" placeholder="Password" required>
-      <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+<h2>Create Account</h2>
 
-      <button type="submit">Signup</button>
-    </form>
+<form id="signupForm">
 
-    <p>Already have an account? <a href="./login.html">Login</a></p>
+<input type="text" id="username" placeholder="Username" required>
 
-  </div>
+<input type="email" id="email" placeholder="Email" required>
 
-  <script src="./js/auth.js"></script>
+<input type="password" id="password" placeholder="Password" required>
+
+<input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+
+<button type="submit">Signup</button>
+
+</form>
+
+<p>Already have an account? <a href="./login.html">Login</a></p>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+
+import { 
+getFirestore, 
+collection, 
+addDoc 
+} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+
+// Firebase configuration
+const firebaseConfig = {
+
+apiKey: "AIzaSyDj3BCOiJKM3Or_ndlo3GQ2kvYzYZNo2UI",
+
+authDomain: "food-for-you-1b3cf.firebaseapp.com",
+
+projectId: "food-for-you-1b3cf",
+
+storageBucket: "food-for-you-1b3cf.appspot.com",
+
+messagingSenderId: "1049634769049",
+
+appId: "1:1049634769049:web:63256e43efc5d83fa29008"
+
+};
+
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+// Signup Form
+document.getElementById("signupForm").addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const username = document.getElementById("username").value;
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+const confirm = document.getElementById("confirmPassword").value;
+
+if(password !== confirm){
+
+alert("Passwords do not match");
+return;
+
+}
+
+try{
+
+await addDoc(collection(db,"users"),{
+
+username: username,
+email: email,
+password: password,
+
+});
+
+alert("Signup Successful:please login to continue");
+
+window.location.href="./login.html";
+
+}
+
+catch(error){
+
+console.error(error);
+alert("Error saving data: " + error.message);
+
+}
+
+});
+
+</script>
 
 </body>
 </html>
